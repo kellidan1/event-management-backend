@@ -42,8 +42,6 @@ app.post('/event', async (req, res) => {
     }
 });
 
-
-
 //create venue
 app.post('/venue', async (req, res) => {
     console.log("Headers:", req.headers);
