@@ -26,4 +26,6 @@ const EventSchema = new mongoose.Schema({
 });
 
 const Event = mongoose.model('Event', EventSchema, "");
-module.exports = Event;
+const Venue = mongoose.model('Venue', VenueSchema, "")
+
+module.exports = {Event, Venue};

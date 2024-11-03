@@ -3,7 +3,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const Event = require('./models/Event');
+
+const {Event, Venue} = require('./models/Event');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -43,6 +44,26 @@ app.post('/event', async (req, res) => {
 
 
 
+//create venue
+app.post('/venue', async (req, res) => {
+    console.log("Headers:", req.headers);
+    console.log("Received event data:", req.body);
+
+    if (Object.keys(req.body).length === 0) {
+        console.error("Request body is empty. Check Content-Type header and JSON parsing middleware.");
+        return res.status(400).send("Request body is empty.");
+    }
+
+    try {
+        const venue = new Venue(req.body);
+        const savedEvent = await venue.save();
+        res.status(201).send(savedEvent);
+    } catch (error) {
+        console.error("Error saving event:", error);
+        res.status(400).send(error);
+    }
+});
+
 // Update Event
 app.put('/event/:id', async (req, res) => {
     try {
@@ -68,6 +89,7 @@ app.delete('/event/:id', async (req, res) => {
         res.status(500).send(error);
     }
 });
+
 // Get all events
 app.get('/events', async (req, res) => {
     try {
@@ -78,6 +100,19 @@ app.get('/events', async (req, res) => {
         res.status(500).send(error);
     }
 });
+
+// Get all venues
+app.get('/venues', async (req, res) => {
+    try {
+        const venues = await Venue.find(); // Retrieve all venues from the database
+        res.status(200).send(venues);
+    } catch (error) {
+        console.error("Error retrieving Venues:", error);
+        res.status(500).send(error);
+    }
+});
+
+
 // Get event by ID
 app.get('/event/:id', async (req, res) => {
     try {
@@ -91,22 +126,7 @@ app.get('/event/:id', async (req, res) => {
         res.status(500).send(error);
     }
 });
-// // subevent
-// app.post('/subevents', async (req, res) => {
-//     const { eventId, subEvents } = req.body;
 
-//     try {
-//         // Assuming you have a SubEvent model
-//         const savedSubEvents = await SubEvent.insertMany(subEvents.map(subEvent => ({
-//             ...subEvent,
-//             eventId // Associate with the main event
-//         })));
-//         res.status(201).send(savedSubEvents);
-//     } catch (error) {
-//         console.error("Error saving sub-events:", error);
-//         res.status(400).send(error);
-//     }
-// });
 
 // Start the server
 app.listen(PORT, () => {
