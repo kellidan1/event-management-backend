@@ -16,6 +16,11 @@ mongoose.connect(`mongodb+srv://root:${process.env.MONGODB_PASS}@cluster0.clyxh.
     useUnifiedTopology: true
 });
 
+
+app.get("/", (req,res)=>{
+    res.sendStatus(200)
+})
+
 //create event
 app.post('/event', async (req, res) => {
     console.log("Headers:", req.headers);
